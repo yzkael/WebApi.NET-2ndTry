@@ -17,6 +17,10 @@ namespace backend.Data
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            builder.Entity<Persona>(entity =>
+            {
+                entity.HasIndex(p => p.Carnet).IsUnique();
+            });
 
             builder.Entity<Persona>().HasData(
                 new Persona
@@ -26,9 +30,12 @@ namespace backend.Data
                     ApellidoPaterno = "Moron",
                     ApellidoMaterno = "Pedraza",
                     Carnet = "12597382",
+                    Telefono = "75526864",
                     UsuarioId = "1"
                 }
             );
+
+
             var hasher = new PasswordHasher<Usuario>();
             builder.Entity<Usuario>().HasData(
 
@@ -46,19 +53,28 @@ namespace backend.Data
             {
                 new IdentityRole
                 {
+                    Id= "1",
                     Name="Admin",
                     NormalizedName = "ADMIN"
                 },
                 new IdentityRole
                 {
-                    Name="Cliente",
-                    NormalizedName = "Cliente"
+                    Id= "2",
+                    Name="User",
+                    NormalizedName = "User"
                 }
             };
 
             builder.Entity<IdentityRole>().HasData(roles);
 
-
+            // Assign Admin Role to the User
+            builder.Entity<IdentityUserRole<string>>().HasData(
+                new IdentityUserRole<string>
+                {
+                    UserId = "1", // The Id of the Usuario
+                    RoleId = "1"  // The Id of the Admin role
+                }
+            );
 
             base.OnModelCreating(builder);
 
